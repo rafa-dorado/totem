@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bodega - El Diario de A Bordo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0c0805;
+            background-image: radial-gradient(circle, #26180f 0%, #0c0805 100%);
+            color: #ebdcb9;
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .interfaz-contenedor {
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            max-height: 850px;
+            background-color: #1a100a;
+            border: 3px double #78522e;
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.95), inset 0 0 30px rgba(120,82,46,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        h1 {
+            color: #c49a45;
+            font-size: 1.6rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #78522e;
+            padding-bottom: 5px;
+            height: 40px;
+        }
+
+        /* Bloqueo Inicial */
+        .pantalla-bloqueada {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .pantalla-bloqueada h2 {
+            color: #a63232;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .caja-entrada {
+            background-color: #110a06;
+            border: 1px solid #78522e;
+            color: #ebdcb9;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.3rem;
+            padding: 10px 15px;
+            text-align: center;
+            width: 280px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .oculto {
+            display: none !important;
+        }
+
+        /* Estructura del Juego Abierto */
+        .seccion-explicativa {
+            background-color: #110a06;
+            border: 1px solid #4a321c;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        .seccion-explicativa h2 {
+            color: #c49a45;
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        p.instrucciones {
+            color: #c2b299;
+            text-align: justify;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .panel-notificaciones {
+            width: 100%;
+            height: 38px;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.95rem;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .notificacion-error {
+            background-color: #2a1111;
+            border: 1px solid #7a3131;
+            color: #ff9e9e;
+        }
+
+        .tablero-juego {
+            display: flex;
+            flex: 1;
+            gap: 25px;
+            min-height: 0;
+        }
+
+        /* Manuscrito Histórico */
+        .pergamino-diario {
+            flex: 2;
+            background-color: #e3cca1;
+            background-image: url('https://transparenttextures.com');
+            border: 2px solid #54371e;
+            padding: 25px;
+            color: #2b1a0e;
+            overflow-y: auto;
+            box-shadow: inset 0 0 40px rgba(74,48,25,0.5);
+            font-style: italic;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            text-align: justify;
+        }
+
+        .pergamino-diario strong {
+            font-style: normal;
+            color: #1f1209;
+            text-transform: uppercase;
+        }
+
+        /* Panel de Control para insertar datos numéricos */
+        .panel-respuesta {
+            width: 380px;
+            background-color: #110a06;
+            border: 1px solid #4a321c;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .boton-marron {
+            background-color: #4a321c;
+            color: #ebdcb9;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 12px 25px;
+            border: 1px solid #78522e;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+            width: 100%;
+        }
+
+        .boton-marron:hover {
+            background-color: #5d3f24;
+        }
+
+        /* Éxito de la Pantalla */
+        .pantalla-exito {
+            width: 100%;
+            height: 100%;
+            background-color: #0d1a0e;
+            border: 1px solid #3b7a42;
+            padding: 40px;
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .pantalla-exito h2 {
+            color: #62c46e;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .pantalla-exito p {
+            font-size: 1.1rem;
+            color: #c2b299;
+            max-width: 800px;
+            line-height: 1.5;
+        }
+
+        .codigo-recompensa {
+            display: inline-block;
+            background-color: #050a05;
+            color: #62c46e;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.5rem;
+            padding: 15px 40px;
+            letter-spacing: 5px;
+            border: 1px solid #244d28;
+            box-shadow: 0 0 15px rgba(98, 196, 110, 0.2);
+            margin: 10px 0;
+        }
+
+        .pergamino-pista {
+            background-color: #17110a;
+            border: 1px dashed #78522e;
+            padding: 20px;
+            border-radius: 4px;
+            font-style: italic;
+            color: #ebdcb9;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="interfaz-contenedor">
+        <!-- SECCIÓN 1: PANEL DE BLOQUEO DE SEGURIDAD -->
+        <div class="pantalla-bloqueada" id="bloque-candado">
+            <h2>Acceso Denegado: Terminal de la Bodega</h2>
+            <p>Este sistema requiere la validación del santo y seña obtenido en la Mesa de Mapas Históricos:</p>
+            <input type="text" class="caja-entrada" id="codigo-acceso" placeholder="INTRODUZCA CLAVE...">
+            <button class="boton-marron" style="width: auto; margin-top: 10px;" onclick="desbloquearPantalla()">Descifrar Acceso</button>
+        </div>
+
+        <!-- SECCIÓN 2: COMPONENTES DEL RETO MATEMÁTICO HISTÓRICO -->
+        <h1 class="elementos-juego oculto" id="titulo-juego">Pantalla 3: El Diario de A Bordo</h1>
+        
+        <div class="seccion-explicativa elementos-juego oculto" id="instrucciones-juego">
+            <h2>Instrucciones del Cuaderno de Bitácora</h2>
+            <p class="instrucciones">
+                Ha logrado franquear el acceso a las crónicas. No obstante, los registros matemáticos de la travesía original muestran indicios de alteración en el recuento manual de las jornadas. <strong>Objetivo del juego:</strong> Analice de forma crítica el fragmento del diario de navegación expuesto a continuación. Calcule el número exacto de días naturales transcurridos en el mar océano entre el zarpe del puerto (tres de agosto de 1492) y el avistamiento definitivo de tierra firme (doce de octubre de 1492). Introduzca la cantidad exacta calculada en el casillero numérico de la derecha. El sistema no empleará mensajes emergentes en caso de fallo.
+            </p>
+        </div>
+
+        <!-- Alertas del juego impresas directamente en pantalla -->
+        <div class="panel-notificaciones notificacion-error" id="caja-notificacion"></div>
+
+        <div class="tablero-juego elementos-juego oculto" id="cuerpo-juego">
+            <div class="pergamino-diario">
+                <strong>Transcripción Adaptada del Cuaderno de Navegación:</strong><br><br>
+                "Sábado, 22 de septiembre. Navegó la armada al Oueste las cuarta del Norueste, variando el rumbo según los vientos. Corrimos en esta jornada unas treinta leguas castellanas. Los marineros y oficiales muestran ya hondo descontento por la inesperada longitud de la empresa náutica. Partimos con la gracia y bendición de la Corona de la villa de Palos el tres de agosto, haciendo la última escala técnica en el archipiélago de la Gomera. Al fin, tras una extenuante y temible travesía que sumó un total declarado de ochenta y cinco días de angustias y dudas en este mar ignoto, el marinero Rodrigo de Triana dio la ansiada voz de 'Tierra a la vista' en la madrugada del doce de octubre..."
+            </div>
+
+            <!-- Panel para digitar la solución numérica -->
+            <div class="panel-respuesta">
+                <p style="text-align: center; font-size: 0.95rem; line-height: 1.4; color: #c2b299;">
+                    Determine la cantidad matemática real de días naturales que abarcó la expedición de ida (3 de agosto al 12 de octubre):
+                </p>
+                <input type="number" class="caja-entrada" id="respuesta-calculo" placeholder="CANTIDAD DE DÍAS..." style="width: 100%;">
+                <button class="boton-marron" onclick="verificarCalculo()">Validar Cómputo</button>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: PANTALLA DE ÉXITO CON LA NUEVA PISTA FÍSICA -->
+        <div class="pantalla-exito" id="bloque-exito">
+            <h2>Cuaderno de Bitácora Rectificado</h2>
+            <p>El error de cómputo en las crónicas ha sido enmendado con rigor académico. Memorice el siguiente santo y seña de seguridad:</p>
+            
+            <div class="codigo-recompensa">GUANAHANI</div>
+            
+            <div class="pergamino-pista">
+                <strong>Enigma de localización de la Pantalla 4:</strong><br>
+                "Las cuentas del cuaderno de bitácora han sido aclaradas, pero las decisiones de gobierno del Almirante se redactan bajo una luz diferente. Abandone la humedad de la bodega. Regrese a los aposentos principales del mando del barco y localice el área de redacción de las órdenes de a bordo. El siguiente sistema aguarda activo en la pantalla física que se sitúa a la derecha del escritorio del capitán."
+            </div>
+            <p style="font-size: 0.95rem; color: #a19279;">Diríjase a esa terminal en la sala e inserte el nuevo código para romper el próximo sellado.</p>
+        </div>
+    </div>
+
+    <script>
+        const CODIGO_OBLIGATORIO_ENTRADA = "PALOS1492";
+        const RESPUESTA_HISTORICA_REAL = 70;
+
+        const panelMensajes = document.getElementById('caja-notificacion');
+
+        function desbloquearPantalla() {
+            const claveIngresada = document.getElementById('codigo-acceso').value.trim().toUpperCase();
+
+            if (claveIngresada === CODIGO_OBLIGATORIO_ENTRADA) {
+                document.getElementById('bloque-candado').style.display = 'none';
+                
+                const componentesJuego = document.querySelectorAll('.elementos-juego');
+                componentesJuego.forEach(elemento => elemento.classList.remove('oculto'));
+                panelMensajes.style.display = 'none';
+            } else {
+                panelMensajes.innerText = "Código de validación incorrecto. El terminal de la Bodega permanece sellado.";
+                panelMensajes.style.display = 'block';
+            }
+        }
+
+        function verificarCalculo() {
+            const entradaAlumno = parseInt(document.getElementById('respuesta-calculo').value);
+
+            if (isNaN(entradaAlumno)) {
+                panelMensajes.innerText = "Operación inválida. Debe escribir un valor numérico antes de solicitar la verificación.";
+                panelMensajes.style.display = 'block';
+                return;
+            }
+
+            if (entradaAlumno === RESPUESTA_HISTORICA_REAL) {
+                panelMensajes.style.display = 'none';
+                document.getElementById('titulo-juego').style.display = 'none';
+                document.getElementById('instrucciones-juego').style.display = 'none';
+                document.getElementById('cuerpo-juego').style.display = 'none';
+                
+                document.getElementById('bloque-exito').style.display = 'flex';
+            } else {
+                panelMensajes.innerText = "Error detectado en el cómputo. Las jornadas calculadas no corresponden al calendario juliano de 1492. Revise el recuento.";
+                panelMensajes.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
